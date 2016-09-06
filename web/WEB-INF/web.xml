@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <servlet>
+        <servlet-name>UserController</servlet-name>
+        <servlet-class>supply.controllers.UserController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderController</servlet-name>
+        <servlet-class>supply.controllers.OrderController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminController</servlet-name>
+        <servlet-class>supply.controllers.AdminController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CatalogController</servlet-name>
+        <servlet-class>supply.controllers.CatalogController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>supply.controllers.LoginController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RegistrationController</servlet-name>
+        <servlet-class>supply.controllers.RegistrationController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmailListServlet</servlet-name>
+        <servlet-class>supply.controllers.EmailListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserController</servlet-name>
+        <url-pattern>/user/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderController</servlet-name>
+        <url-pattern>/order/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminController</servlet-name>
+        <url-pattern>/adminController/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CatalogController</servlet-name>
+        <url-pattern>/catalog/product/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/LoginController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegistrationController</servlet-name>
+        <url-pattern>/Registration</url-pattern>
+    </servlet-mapping>
+    <security-role>
+        <description>customer service employees</description>
+        <role-name>service</role-name>
+    </security-role>
+    <security-role>
+        <description>programmers</description>
+        <role-name>programmer</role-name>
+    </security-role>
+    <security-role>
+        <description> administrators</description>
+        <role-name>administrator</role-name>
+    </security-role>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name> Admin</web-resource-name>
+            <url-pattern> /admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>service</role-name>
+            <role-name>programmer </role-name>
+            <role-name>administrator </role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method> FORM</auth-method>
+        <form-login-config>
+            <form-login-page> /login.jsp </form-login-page>
+            <form-error-page> /login_error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+    <servlet-mapping>
+        <servlet-name>EmailListServlet</servlet-name>
+        <url-pattern>/EmailListServlet</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>
