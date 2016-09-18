@@ -16,27 +16,34 @@ import javax.mail.internet.*;
  * @author Ngoc
  */
 public class MailUtilLocal {
-    public static void sendImail(String to, String from, String subject, String body, boolean bodyIsHTML)
-            throws MessagingException{
-        Properties pros = new Properties();
-        pros.put("mail.transport.protocl","smtp");
-        pros.put("mail.smtp.host", "localhost");
-        pros.put("mail.smtp.port", 25);
-        Session session = Session.getDefaultInstance(pros);
+    public static void sendMail(String to, String from,
+            String subject, String body, boolean bodyIsHTML)
+            throws MessagingException {
+        
+        // 1 - get a mail session
+        Properties props = new Properties();
+        //props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.host", "localhost");
+        //props.put("mail.smtp.port", 25);        
+        Session session = Session.getDefaultInstance(props);
         session.setDebug(true);
+
+        // 2 - create a message
         Message message = new MimeMessage(session);
         message.setSubject(subject);
-        if(bodyIsHTML){
+        if (bodyIsHTML) {
             message.setContent(body, "text/html");
-        }else{
+        } else {
             message.setText(body);
         }
+
+        // 3 - address the message
         Address fromAddress = new InternetAddress(from);
         Address toAddress = new InternetAddress(to);
         message.setFrom(fromAddress);
-        
         message.setRecipient(Message.RecipientType.TO, toAddress);
-        Transport.send(message);        
-        
+
+        // 4 - send the message
+        Transport.send(message);
     }
 }

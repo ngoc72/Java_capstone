@@ -180,7 +180,7 @@ public class ProductDB {
                +"WHERE productId =?";
         try{
             ps = connection.prepareStatement(query); 
-            System.out.println("query is:"+ query);
+           
             ps.setString(1,product.getCode());
             ps.setString(2,product.getProductName());
             ps.setString(3,product.getDescription());

@@ -1,17 +1,24 @@
-<!DOCTYPE html>
+<%-- 
+    Document   : updateAccount
+    Created on : Sep 6, 2016, 7:38:36 PM
+    Author     : Ngoc
+--%>
+
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
-     <div class="container">
+ <div class="container">   
         <div class="row content">
-            <div class="col-md-2">
-                
+            <div class="col-md-3">
+              <c:import url="/includes/column_left_login.jsp" />  
             </div>
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <div class="container">
-                    <p><h3 style="color: blue"> ${message}</h3></p>
-                    <h4> Shipping info </h4>
-                   <form class="form-horizontal" action = "<c:url value='/order/processUser'/>" method = "post">
-                       <!-- <div class="form-group">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10">
+                        <h4> Your account info: </h4>
+                    </div>
+                    <form class="form-horizontal" action = "processUpdate?email=${user.email}" method = "post">
+                        <div class="form-group">
                             <label class="control-label col-sm-2">First name:</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="fname" value ="${user.firstName}">
@@ -23,29 +30,7 @@
                                 <input type="text" class="form-control" name="lname" value ="${user.lastName}">
 
                             </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Email:</label>
-                            <div class="col-sm-10">
-                                <input type="email" class="form-control" name="email" value ="${user.email}">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Password:</label>
-
-                            <div class="col-sm-10">
-                                <input type="password" class="form-control" name="password" value ="${user.password}">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2"> Confirm password:</label>
-
-                            <div class="col-sm-10">
-                                <input type="password" class="form-control" name="confirmPassword" value ="${user.password}">
-                            </div>
-                        </div> -->
+                        </div>                        
                         <div class="form-group">
                             <label class="control-label col-sm-2">Company:</label>
 
@@ -92,14 +77,16 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Submit</button>
+                                <button type="submit" class="btn btn-default">UPDATE</button>
                             </div>
                         </div>
+                            
                     </form>
                 </div>
             </div>
                       
                     
         </div>           
-     </div>
-    <c:import url="/includes/footer.jsp" />
+</div>
+        
+<c:import url="/includes/footer.jsp" />

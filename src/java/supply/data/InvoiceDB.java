@@ -61,7 +61,7 @@ public class InvoiceDB {
         }
     }
 
-    public static ArrayList<Invoice> selectUnprocessedInvoices(){
+    public static ArrayList<Invoice> selectUnprocessedInvoices() {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
@@ -89,9 +89,9 @@ public class InvoiceDB {
                 invoice.setLineItems(lineItems);
                 invoice.setInvoiceDate(rs.getDate("invoiceDate"));
                 invoice.setInvoiceNumber(invoiceId);
-                invoice.setIsProcess(false);
+                invoice.setIsProcessed(false);
                 unprocessedInvoices.add(invoice);
-                
+
             }
             return unprocessedInvoices;
 
@@ -105,7 +105,8 @@ public class InvoiceDB {
         }
 
     }
-     public static void updateInvoice(Invoice invoice) {
+
+    public static void updateInvoice(Invoice invoice) {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
         PreparedStatement ps = null;
@@ -125,5 +126,84 @@ public class InvoiceDB {
             DBUtil.closePrepareStatement(ps);
             pool.freeConnection(connection);
         }
+    }
+
+    public static ArrayList<Invoice> selectInvoice(Long userId) {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT * FROM Invoice "
+                + "WHERE userId = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setLong(1, userId);
+            rs = ps.executeQuery();
+            ArrayList<Invoice> invoices = new ArrayList<>();
+            while (rs.next()) {
+                Invoice invoice = new Invoice();
+                invoice.setInvoiceNumber(rs.getLong("invoiceId"));
+                invoice.setInvoiceDate(rs.getDate("invoiceDate"));
+                invoice.setIsProcessed(rs.getBoolean("isProcessed"));
+                User user = new User();
+                user = UserDB.selectUser(userId);
+                invoice.setUser(user);
+                //LineItem lineItem = new LineItem();
+                long invoiceId = rs.getLong("invoiceId");
+                List<LineItem> lineItems = LineItemDB.selectLineItems(invoiceId);
+                invoice.setLineItems(lineItems);
+                invoices.add(invoice);
+                
+
+            }
+            return invoices;
+        } catch (SQLException e) {
+            System.err.println(e);
+            return null;
+        } finally {
+            DBUtil.closePrepareStatement(ps);
+            DBUtil.closeResultSet(rs);
+            pool.freeConnection(connection);
+        }
+
+    }
+    public static Invoice selectInvoiceByInvoiceNumber(Long invoiceNumber) {
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT * FROM Invoice "
+                + "WHERE InvoiceId = ?";
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setLong(1,invoiceNumber);
+            rs = ps.executeQuery();
+            Invoice invoice = new Invoice();
+            if (rs.next()) {
+                
+                invoice.setInvoiceNumber(rs.getLong("invoiceId"));
+                invoice.setInvoiceDate(rs.getDate("invoiceDate"));
+                invoice.setIsProcessed(rs.getBoolean("isProcessed"));
+                Long userId = rs.getLong("userId");
+                
+                User user = new User();
+                user = UserDB.selectUser(userId);
+                invoice.setUser(user);
+                LineItem lineItem = new LineItem();
+                long invoiceId = rs.getLong("invoiceId");
+                List<LineItem> lineItems = LineItemDB.selectLineItems(invoiceId);
+                invoice.setLineItems(lineItems);
+                
+            }
+            return invoice;
+        } catch (SQLException e) {
+            System.err.println(e);
+            return null;
+        } finally {
+            DBUtil.closePrepareStatement(ps);
+            DBUtil.closeResultSet(rs);
+            pool.freeConnection(connection);
+        }
+
     }
 }

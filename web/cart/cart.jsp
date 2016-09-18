@@ -7,11 +7,11 @@
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
 <div class="container">
-     <div class="row">
+     <div class="row content">
          <div class="col-md-2">
              
          </div>
-         <div class="col-md-10">
+         <div class="col-md-8">
                 <h1>Your cart</h1>
                 <c:choose>
                     <c:when test = "${emtyCart != null}">
@@ -58,19 +58,24 @@
                                 <td colspan="3">&nbsp;</td>
                             </tr>
                         </table>
-                    </c:otherwise>
-                </c:choose>
-                <form  action="<c:url value='/catalog/product/'/>" method="get" >
+                        <form  action="<c:url value='/catalog/product/'/>" method="get" >
                     <button type="submit" class="btn btn-default"> Continue Shopping</button>
                     <!--<input type="submit" value="Continue Shopping">-->
                 </form>
-                <c:if test="${emptyCart == null}">
+                    <br>
+               
 
                     <form action="<c:url value='/order/checkUser'/>" method="post">
                         <button type="submit" class="btn btn-default">Checkout</button>
                         <!--<input type="submit" value="Checkout">-->
                     </form>
-                </c:if>
+                
+                    </c:otherwise>
+                </c:choose>
+                
+            </div>
+            <div class="col-md-2">
+             
             </div>
     </div>
 </div>                 

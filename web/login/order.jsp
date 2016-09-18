@@ -1,6 +1,6 @@
 <%-- 
-    Document   : invoice
-    Created on : Aug 23, 2016, 11:36:29 AM
+    Document   : order
+    Created on : Sep 7, 2016, 10:49:24 AM
     Author     : Ngoc
 --%>
 
@@ -8,20 +8,27 @@
 <c:import url="/includes/header.jsp" />
 <div class="container">
      <div class="row content">
-         <div class="col-md-2"> 
-             <c:import url="/includes/column_left_admin.jsp" />
+         <div class="col-md-3">
+                
+                 <c:import url="/includes/column_left_login.jsp" />
+             
          </div>
-         <div class="col-md-10">
-                <h1> Customer invoice</h1>
-
-                <table class="table">
+         <div class="col-md-9">
+             
+             <h4> Invoice info: </h4>
+             <table class="table">
+                 <tr>
+                     <td><b> Invoice number: </b></td>
+                     <td> ${invoice.invoiceNumber}</td>
+                     <td></td>
+                 </tr>
                   <tr>
-                    <td><b>Date</b></td>
+                    <td><b>Date: </b></td>
                     <td>${invoice.invoiceDate}</td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td><b>Ship To</b></td>
+                    <td><b>Ship To: </b></td>
                     <td>${invoice.user.getAddressFormat()}</td>
                     <td></td>
                   </tr>
@@ -40,11 +47,11 @@
                   </tr>
                   </c:forEach>
 
-                  <tr><td colspan="3"></td></tr>
+                  <tr><td colspan="3"><hr></td></tr>
                   <tr>
                     <td><b>Total</b></td>
                     <td></td>
-                    <td><${invoice.invoiceTotalCurrencyFormat}</td>
+                    <td>${invoice.invoiceTotalCurrencyFormat}</td>
                   </tr>      
                 </table>
 
@@ -53,21 +60,13 @@
                     (${invoice.user.creditCardExpirationDate})</span><br>
                 <label>Email Address: </label>
                 <span>${invoice.user.email}</span><br>
-                
-                    <div class="form-group">
-                        <form action="<c:url value='/adminController/processInvoice'/>" method="post">
-
-
-                            <input  type="submit" class="btn btn-default" value="Process Invoice">
-                        </form>
-                        <br>
-                        <form action="displayInvoices" method="post">
-
-
-                            <input type="submit" class="btn btn-default" value="View Unprocessed Invoices">
-                        </form>
-                    </div>
+                <label> Status: </label>
+                <span style="color: blue">${status}</span><br>
+                 
          </div>
+         
      </div>
-</div>           
-<c:import url="/includes/footer.jsp" />
+</div>
+     
+   
+    <c:import url="/includes/footer.jsp" />

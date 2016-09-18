@@ -6,8 +6,8 @@
 
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
-
-     <div class="row">
+<div class="container">
+     <div class="row content">
          <div class="col-md-2"> 
              <c:import url="/includes/column_left_admin.jsp" />
          </div>
@@ -47,6 +47,6 @@
          </div>
      </div>
                      
-
+</div>
         
     <c:import url="/includes/footer.jsp" />

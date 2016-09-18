@@ -13,6 +13,7 @@
          </div>
          <div class="col-md-10">
              <div class="container">
+                 <p style="color:red;"><h4>${message}</h4></p>
                 <h1> Products</h1>
                 <table class="table table-condensed">
                     <thead>
@@ -25,7 +26,7 @@
                             <th>Category</th>
                             <th>Price</th>
                             <th>Remove</th>
-                            <th>Updated</th>
+                            <th>Update</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +40,7 @@
                                <td>${product.brand}</td>
                                <td>${product.category}</td>
                                <td>${product.price}</td>
-                               <td> <input type="submit" name ="action" value="Delete"> </td> 
+                               <td> <input onclick="elertDelete()" type="submit" name ="action" value="Delete"> </td> 
                                <td> <input type="submit" name="action" value="Update"> </td> 
                             </form>
                          </tr>    
@@ -49,7 +50,7 @@
                     </tbody>
 
                 </table>
-                <p>${message}</p>
+                
                 <form action ="<c:url value='/admin/addProduct.jsp'/>">
                     <input type ="submit" value="ADD PRODUCT">
                 </form>
@@ -57,5 +58,9 @@
             </div>
          </div>            
      </div>
-                 
+     <script>
+        function elertDelete() {
+            alert("Are you sure you want to delete?!");
+        }
+     </script>            
   <c:import url="/includes/footer.jsp" />

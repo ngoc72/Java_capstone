@@ -58,17 +58,19 @@ public class Invoice implements Serializable{
         return lineItems;
     }
 
+    public boolean isIsProcessed() {
+        return isProcessed;
+    }
+
+    public void setIsProcessed(boolean isProcessed) {
+        this.isProcessed = isProcessed;
+    }
+
     public void setLineItems(List<LineItem> lineItems) {
         this.lineItems = lineItems;
     }
 
-    public Boolean isIsProcess() {
-        return isProcessed;
-    }
-
-    public void setIsProcess(Boolean isProcessed) {
-        this.isProcessed = isProcessed;
-    }
+    
     public Double getInvoiceTotal(){
         Double invoiceTotal = 0.0;
         for(LineItem lineItem:lineItems){
@@ -83,5 +85,5 @@ public class Invoice implements Serializable{
         return formattedTotal;
          
     }    
-    
+   
 }

@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package supply.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -23,13 +23,16 @@ import supply.business.Invoice;
 import supply.data.UserDB;
 import supply.util.CookieUtil;
 import supply.data.InvoiceDB;
+import supply.util.PasswordUtil;
 
 /**
  *
  * @author Ngoc
  */
 public class OrderController extends HttpServlet {
+
     private static final String defaultURL = "/cart/cart.jsp";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -48,7 +51,7 @@ public class OrderController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderController</title>");            
+            out.println("<title>Servlet OrderController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet OrderController at " + request.getContextPath() + "</h1>");
@@ -71,19 +74,19 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         String url = "";
-        
-        if (requestURI.endsWith("/showCart")){
-            url= showCart(request,response);
-            
-        
-        getServletContext()
-                .getRequestDispatcher(url)
-                .forward(request, response);
-        
+
+        if (requestURI.endsWith("/showCart")) {
+            url = showCart(request, response);
+
+            getServletContext()
+                    .getRequestDispatcher(url)
+                    .forward(request, response);
+
+        }
     }
-    }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -95,253 +98,287 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String url = defaultURL;
-            String requestURI = request.getRequestURI();
-            if(requestURI.endsWith("/addItem")){
-                addItem(request,response);
-            }
-            else if (requestURI.endsWith("/updateItem")){
-                updateItem(request,response);
-            }
-            else if (requestURI.endsWith("/removeItem")){
-                removeItem(request,response);
-            }
-            else if (requestURI.endsWith("/checkUser")){
-                url = checkUser(request,response);
-            }
-            else if (requestURI.endsWith("/processUser")){
-                url = processUser(request, response);
-            } else if (requestURI.endsWith("/displayInvoice")) {
-            url = displayInvoice(request, response);
-            } else if (requestURI.endsWith("/displayUser")) {
-            url = "/cart/user.jsp";
-            } else if (requestURI.endsWith("/displayCreditCart")) {
-                    url = "/cart/credit_cart.jsp";
-            }else if (requestURI.endsWith("/completeOrder")){
-                url = completeOrder(request,response);                    
-            }
-        
-            getServletContext()
-                    .getRequestDispatcher(url)
-                    .forward(request,response);
-            
-            
-        
-          
-    }
-    public String showCart(HttpServletRequest request, HttpServletResponse response){
-        HttpSession session = request.getSession();
-        Cart cart = (Cart)session.getAttribute("cart");  
         String url = defaultURL;
-        if(cart == null || cart.getCount() == 0){
-            request.setAttribute("emtyCart","Your cart is empty");
-            
-        }else{
-            session.setAttribute("cart",cart);
+
+        String requestURI = request.getRequestURI();
+        if (requestURI.endsWith("/addItem")) {
+            addItem(request, response);
+        } else if (requestURI.endsWith("/updateItem")) {
+            updateItem(request, response);
+        } else if (requestURI.endsWith("/removeItem")) {
+            removeItem(request, response);
+        } else if (requestURI.endsWith("/checkUser")) {
+            url = checkUser(request, response);
+        } else if (requestURI.endsWith("/processUser")) {
+            url = processUser(request, response);
+        } else if (requestURI.endsWith("/displayInvoice")) {
+            url = displayInvoice(request, response);
+        } else if (requestURI.endsWith("/displayUser")) {
+            url = "/cart/user.jsp";
+        } else if (requestURI.endsWith("/displayCreditCart")) {
+            url = "/cart/credit_cart.jsp";
+        } else if (requestURI.endsWith("/completeOrder")) {
+            url = completeOrder(request, response);
+        }
+
+        getServletContext()
+                .getRequestDispatcher(url)
+                .forward(request, response);
+
+    }
+
+    public String showCart(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        Cart cart = (Cart) session.getAttribute("cart");
+        String url = defaultURL;
+        if (cart == null || cart.getCount() == 0) {
+            request.setAttribute("emtyCart", "Your cart is empty");
+
+        } else {
+            session.setAttribute("cart", cart);
         }
         return url;
     }
-    public String addItem(HttpServletRequest request, HttpServletResponse response ){
-        
+
+    public String addItem(HttpServletRequest request, HttpServletResponse response) {
+
         HttpSession session = request.getSession();
-        Cart cart = (Cart)session.getAttribute("cart");
-        if (cart == null){
+
+        Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) {
             cart = new Cart();
         }
         String productCode = request.getParameter("productCode");
         Product product = ProductDB.selectProduct(productCode);
-        if (product != null){
-            LineItem lineItem =  new LineItem();
+        if (product != null) {
+            LineItem lineItem = new LineItem();
             lineItem.setProduct(product);
             cart.addItem(lineItem);
         }
         session.setAttribute("cart", cart);
         return defaultURL;
-        
-        
+
     }
-    public String updateItem(HttpServletRequest request, HttpServletResponse response){
-       
+
+    public String updateItem(HttpServletRequest request, HttpServletResponse response) {
+
         String productCode;
         String strQuantity = request.getParameter("quantity");
         productCode = request.getParameter("productCode");
         LineItem lineItem = new LineItem();
         int quantity;
-        try{
+        try {
             quantity = Integer.parseInt(strQuantity);
-            if(quantity < 1){
+            if (quantity < 1) {
                 quantity = 1;
             }
-            
-        }catch(NumberFormatException e){
-             quantity = 1;
-                }
+
+        } catch (NumberFormatException e) {
+            quantity = 1;
+        }
         lineItem.setQuantity(quantity);
         Product product = ProductDB.selectProduct(productCode);
         lineItem.setProduct(product);
-        
+
         HttpSession session = request.getSession();
-        Cart cart = (Cart)session.getAttribute("cart");
+        Cart cart = (Cart) session.getAttribute("cart");
         cart.addItem(lineItem);
-       session.setAttribute("cart", cart);
-        
-                
-        
+        session.setAttribute("cart", cart);
+
         return defaultURL;
-        
+
     }
-    public String removeItem(HttpServletRequest request, HttpServletResponse response){
+
+    public String removeItem(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Cart cart = (Cart)session.getAttribute("cart");
+        Cart cart = (Cart) session.getAttribute("cart");
         String productCode = request.getParameter("productCode");
-        
+
         Product product = ProductDB.selectProduct(productCode);
         LineItem lineItem = new LineItem();
         lineItem.setProduct(product);
-        
+
         cart.removeItem(lineItem);
-        
+
         return defaultURL;
     }
-    public String checkUser(HttpServletRequest request, HttpServletResponse response){
-       
+
+    public String checkUser(HttpServletRequest request, HttpServletResponse response) {
+
         HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         String url = "/cart/user.jsp";
-       
-        if (user != null && !user.getAddress1().equals("")) {
-            url = "/order/displayInvoice";
-        } else {  // otherwise, check the email cookie
-            Cookie[] cookies = request.getCookies();
-            String email
-                    = CookieUtil.getCookieValue(cookies, "emailCookie");
-            if (email.equals("")) {
-                user = new User();
-                url = "/cart/user.jsp";
-            } else {
-                user = UserDB.selectUser(email);
-                if (user != null && !user.getAddress1().equals("")) {
-                    url = "/order/displayInvoice";
-                }
-            }
+        if (user == null) {
+            url = "/cart/account.jsp";
+        } else {
+            url = "/cart/user.jsp";
         }
-        session.setAttribute("user", user);
+
+        /*if (user != null && !user.getAddress1().equals("")) {
+         url = "/order/displayInvoice";
+         } else {  // otherwise, check the email cookie
+         Cookie[] cookies = request.getCookies();
+         String email = CookieUtil.getCookieValue(cookies, "emailCookie");
+         if (email.equals("")){ 
+         user = new User();
+         url = "/cart/user.jsp";
+         }else{ 
+         user = UserDB.selectUser(email);
+         if (user != null && !user.getAddress1().equals("")) {
+         url = "/order/displayInvoice";
+         }
+         }
+         }*/
+        //session.setAttribute("user", user);
         return url;
-            
-       
+
     }
-    public String processUser(HttpServletRequest request, HttpServletResponse response){
-         String firstName = request.getParameter("fname");
-        String lastName = request.getParameter("lname");
-        String companyName = request.getParameter("company");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+
+    public String processUser(HttpServletRequest request, HttpServletResponse response) {
+        String message = "";
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        String company = request.getParameter("company");
         String address1 = request.getParameter("address1");
         String address2 = request.getParameter("address2");
         String city = request.getParameter("city");
         String state = request.getParameter("state");
         String zip = request.getParameter("zip");
         String country = request.getParameter("country");
+        user.setCompanyName(company);
+        user.setAddress1(address1);
+        user.setAddress2(address2);
+        user.setCity(city);
+        user.setState(state);
+        user.setZip(zip);
+        user.setCountry(country);
+        UserDB.updateUser(user);
         
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-        }
 
-        if (UserDB.emailExists(email,password)) {
-            user = UserDB.selectUser(email);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setCompanyName(companyName);
-            user.setAddress1(address1);
-            user.setAddress2(address2);
-            user.setCity(city);
-            user.setState(state);
-            user.setZip(zip);
-            user.setCountry(country);            
-            UserDB.updateUser(user);
-        } else {
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setCompanyName(companyName);
-            user.setAddress1(address1);
-            user.setAddress2(address2);
-            user.setCity(city);
-            user.setState(state);
-            user.setZip(zip);
-            user.setCountry(country);
-            UserDB.insertUser(user);
-        }
+        /* String firstName = request.getParameter("fname");
+         String lastName = request.getParameter("lname");
+         String companyName = request.getParameter("company");
+         String email = request.getParameter("email");
+         String password = request.getParameter("password");
+         String confirmPassword = request.getParameter("confirmPassword");
+       
+         if (!password.equals(confirmPassword)){
+         message ="Your password is not correct, try again.";
+         request.setAttribute("message", message);
+         return "/cart/user.jsp";
+         }else{
+         String hashPassword = "";
+         try {
+         hashPassword = PasswordUtil.hashPassword(password);
+         } catch (NoSuchAlgorithmException ex) {
+         System.out.println(ex);
+         }
+         String address1 = request.getParameter("address1");
+         String address2 = request.getParameter("address2");
+         String city = request.getParameter("city");
+         String state = request.getParameter("state");
+         String zip = request.getParameter("zip");
+         String country = request.getParameter("country");
 
+         HttpSession session = request.getSession();
+         User user = (User) session.getAttribute("user");
+         if (user == null) {
+         user = new User();
+         }
+
+         if (UserDB.emailExists(email, hashPassword)) {
+         user = UserDB.selectUser(email);
+         user.setFirstName(firstName);
+         user.setLastName(lastName);
+         user.setEmail(email);
+         user.setPassword(hashPassword);
+         user.setCompanyName(companyName);
+         user.setAddress1(address1);
+         user.setAddress2(address2);
+         user.setCity(city);
+         user.setState(state);
+         user.setZip(zip);
+         user.setCountry(country);
+         UserDB.updateUser(user);
+         } else {
+         user.setFirstName(firstName);
+         user.setLastName(lastName);
+         user.setEmail(email);
+         user.setPassword(hashPassword);
+         user.setCompanyName(companyName);
+         user.setAddress1(address1);
+         user.setAddress2(address2);
+         user.setCity(city);
+         user.setState(state);
+         user.setZip(zip);
+         user.setCountry(country);
+         UserDB.insertUser(user);
+         }
+         */
         session.setAttribute("user", user);
 
         return "/order/displayInvoice";
     }
-    public String displayInvoice(HttpServletRequest request, HttpServletResponse response){
+
+
+public String displayInvoice(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        User user = (User)session.getAttribute("user");
-        Cart cart = (Cart)session.getAttribute("cart");
+        User user = (User) session.getAttribute("user");
+        Cart cart = (Cart) session.getAttribute("cart");
         Invoice invoice = new Invoice();
         invoice.setUser(user);
         invoice.setLineItems(cart.getItems());
         java.util.Date today = new java.util.Date();
         invoice.setInvoiceDate(today);
-        
-        session.setAttribute("invoice",invoice);
+
+        session.setAttribute("invoice", invoice);
         return "/cart/invoice.jsp";
-        
+
     }
-   
-    
-    public String completeOrder(HttpServletRequest request, HttpServletResponse response){
+
+    public String completeOrder(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Invoice invoice = (Invoice)session.getAttribute("invoice");
+        Invoice invoice = (Invoice) session.getAttribute("invoice");
         String creditCartType = request.getParameter("creditCartType");
         String creditCartNumber = request.getParameter("creditCartNumber");
         String creditCartExpirationMonth = request.getParameter("creditCartExpirationMonth");
         String creditCartExpirationyear = request.getParameter("creditCartExpirationYear");
-        String creditCartExpitationDate = creditCartExpirationMonth +"/" + creditCartExpirationyear;
+        String creditCartExpitationDate = creditCartExpirationMonth + "/" + creditCartExpirationyear;
         User user = invoice.getUser();
         user.setCreditCardType(creditCartType);
         user.setCreditCardNumber(creditCartNumber);
         user.setCreditCardExpirationDate(creditCartExpitationDate);
-        
-        if (UserDB.emailExists(user.getEmail(),user.getPassword())) {
+
+        if (UserDB.emailExists(user.getEmail(), user.getPassword())) {
             UserDB.updateUser(user);
         } else { // otherwise, write a new record for the user            
             UserDB.insertUser(user);
-        }        
+        }
         invoice.setUser(user);
-        
+
         // write a new invoice record
         InvoiceDB.insert(invoice);
-        
+
         // set the emailCookie in the user's browser.
-        Cookie emailCookie = new Cookie("emailCookie",
+        /*Cookie emailCookie = new Cookie("emailCookie",
                 user.getEmail());
-        emailCookie.setMaxAge(60*24*365*2*60);
+        emailCookie.setMaxAge(60 * 24 * 365 * 2 * 60);
         emailCookie.setPath("/");
-        response.addCookie(emailCookie);
+        response.addCookie(emailCookie);*/
 
         // remove all items from the user's cart
         session.setAttribute("cart", null);
-        
-      return "/cart/complete.jsp" ; 
+        session.setAttribute("user", user);
+        return "/cart/complete.jsp";
     }
-    
-    
+
     /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+        public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

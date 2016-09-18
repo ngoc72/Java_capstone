@@ -7,7 +7,7 @@
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
 <div class="container">
-    <div class="row">
+    <div class="row content">
          <div class="col-md-3">
          </div>
         <div class="col-md-9">

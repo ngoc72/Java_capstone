@@ -15,19 +15,38 @@
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+        <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
 
         `
     </head>
     <style>
+        html{ 
+            height: 100%;
+        }
+        header{
+            margin-top: 0px;
+        }
+        body{
+            margin-top: 0px;
+        }
         .navbar {
             margin-bottom: 0;
             border-radius: 0;
+        }
+
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content {
+            height: 520px;
+            
         }
         .first-con {
             background: lavender url('/beauty_supply/images/roses02.jpg')repeat fixed;         
 
         } 
+        .catalog-con{
+            text-align: center;
+        }
         .first-col{
 
             font-family: 'AR BLANCA', cursive;
@@ -51,9 +70,7 @@
         .row{
             padding-top: 0.5cm;
         }
-        .col-md-3,.col-sm-9{
-            padding-left: 1cm;
-        }
+        
         carousel-inner > .item > img,
         .carousel-inner > .item > a > img {
             width: 90%;
@@ -61,8 +78,24 @@
         }        
         .form-control {
             width:400px;
-        }   
-  
+        } 
+        footer{
+            padding: 24px 0 5px 0;
+           
+            
+        }
+        .search{
+            width: 134px; 
+            font-size: 14px;
+        }
+        .admin{
+            margin-bottom:10px;
+            width: 200px;
+            text-align: left;
+            background-color:lightgrey;
+        }
+        
+
     </style>
     <body data-spy="scroll" data-target=".navbar" data-offset="50">
 
@@ -78,7 +111,8 @@
                 </div>
             </div>
         </div>
-
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>-->
 
 
 
@@ -98,7 +132,7 @@
 
                         <!--<li><a href="<c:url value='/user/deleteCookies'/>">DELETE COOKIES</a></li>-->
 
-                        <li><a href="<c:url value='/admin'/>"> ADMIN</a></li>  
+                        <!--<li><a href="<c:url value='/admin'/>"> ADMIN</a></li>  -->
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
@@ -114,6 +148,7 @@
                 </div>
             </div>
         </nav>
+
 
 
 

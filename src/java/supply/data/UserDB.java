@@ -62,6 +62,7 @@ public class UserDB {
     }
     
     
+    
     public static void insertUser(User user){
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
@@ -160,6 +161,35 @@ public class UserDB {
         }
         
     }
+    public static void updateUser(String password, String email){
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        String query = "UPDATE User SET "
+                + "password= ? "                
+                + "WHERE Email = ? ";
+        try{
+            ps = connection.prepareStatement(query);
+           
+            
+            ps.setString(1,password);
+            ps.setString(2,email);
+            ps.executeUpdate();
+            
+        }catch (SQLException e) {
+            System.err.println(e);
+            
+            
+        }finally{
+            pool.freeConnection(connection);
+            DBUtil.closePrepareStatement(ps);
+            DBUtil.closeResultSet(rs);
+        }
+        
+    }
+    
     public static boolean emailExists(String email, String pass) {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
@@ -182,6 +212,47 @@ public class UserDB {
             DBUtil.closePrepareStatement(ps);
             pool.freeConnection(connection);
         }
+    }
+    public static User selectUser(long userId){
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String query = "SELECT * from User "
+                + "WHERE userId =?";
+        try{
+            ps = connection.prepareStatement(query);
+            ps.setLong(1, userId);
+            rs = ps.executeQuery();
+            User user = null;
+            if(rs.next()){
+                user = new User();
+                 user.setUserId(rs.getLong("UserId"));
+                user.setFirstName(rs.getString("FirstName"));
+                user.setLastName(rs.getString("LastName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPassword(rs.getString("Password"));
+                user.setCompanyName(rs.getString("Company"));
+                user.setAddress1(rs.getString("Address1"));
+                user.setAddress2(rs.getString("Address2"));
+                user.setCity(rs.getString("City"));
+                user.setState(rs.getString("State"));
+                user.setZip(rs.getString("Zip"));
+                user.setCountry(rs.getString("country"));
+                user.setCreditCardType(rs.getString("CreditCardType"));
+                user.setCreditCardNumber(rs.getString("CreditCardNumber"));
+                user.setCreditCardExpirationDate(rs.getString("CreditCardExpirationDate"));
+            }
+            return user;
+        }catch(SQLException e){
+            System.out.println(e);
+            return null;
+        }finally{
+            DBUtil.closePrepareStatement(ps);
+            DBUtil.closeResultSet(rs);
+            pool.freeConnection(connection);
+        }
+        
     }
     
 }

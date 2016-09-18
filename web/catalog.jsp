@@ -5,14 +5,14 @@
 --%>
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
-<session>
-    <div class="row">
+<div class="container">
+    <div class="row content">
         <div class="col-md-3">
-            <div class="container">
+            <div class=" container" >
                 <p> <h1> Products </h1> </p>
                 <c:forEach var = "item" items = "${products}">
-                <a href ="${item.code}"><b> ${item.productName} </b><a> </br> 
-                        </c:forEach>                   
+                <a href ="${item.code}"> ${item.productName}<a> </br> 
+                 </c:forEach>                   
             </div>
             
         </div>
@@ -69,26 +69,10 @@
 
         </div>
         <div class="col-md-3">
-            <div class="container">
-                <div>
-                <img src="/beauty_supply/images/best_deal.jpg" alt="Best Deal" width="150" height="150">
-                </div>
-                <div>
-                <img src="/beauty_supply/images/new_arrival.jpeg" alt=" New Arival" width="150" height="150">
-                </div>
-            </div>
-            <div class="container">
-                <h4> Useful links </h4>
-                <ul>
-                    <li><a href ="https://www.tdlr.texas.gov"> TDLR </a></li>
-                    <li> <a href ="http://www.thebeautymagazine.com"> Beauty Magazine </a></li>                    
-                    
-                </ul>
-                
-            </div>
+        <c:import url="/includes/column_right_catalog.jsp" />    
         </div>
                         
         
     </div>
-</session>
+</div>
 <c:import url="/includes/footer.jsp" />

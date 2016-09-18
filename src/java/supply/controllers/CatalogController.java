@@ -66,13 +66,14 @@ public class CatalogController extends HttpServlet {
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String url;
+        HttpSession session = request.getSession();
         if (requestURI.endsWith("/"))
             {
             ArrayList<Product> products =  ProductDB.selectAllProducts();
 
-            request.setAttribute("products", products);
+            session.setAttribute("products", products);
             url = "/catalog.jsp";
-       
+            
             }
         else 
             {
@@ -104,12 +105,18 @@ public class CatalogController extends HttpServlet {
     private String showProduct(HttpServletRequest request,HttpServletResponse response){
         String url;
         String productCode = request.getPathInfo();
-        
+        HttpSession session = request.getSession();
+        ArrayList<Product> products = new ArrayList<>();
+        products = (ArrayList<Product>)session.getAttribute("products");
+        session.setAttribute("products", products);
         if (productCode != "") {
             productCode = productCode.substring(1);
             Product product = ProductDB.selectProduct(productCode);
-            HttpSession session = request.getSession();
+            
             session.setAttribute("product", product);
+            
+
+            
         }        
         return "/displayProduct.jsp";
         

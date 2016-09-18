@@ -7,7 +7,7 @@
 <%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <c:import url="/includes/header.jsp" />
 <div class="container">
-     <div class="row">
+     <div class="row content">
          <div class="col-md-2">
              
          </div>
@@ -44,8 +44,9 @@
                 </table>
 
                  <form action ="<c:url value ='/order/displayUser'/>" method ="post" />
-                     <input type = "submit" value ="Edit address"/>
+                     <input type = "submit" value ="Edit info"/>
                 </form>  
+                <br>
                 <form action ="<c:url value ='/order/displayCreditCart'/>" method ="post" />
                      <input type = "submit" value ="Continue"/>
                 </form>

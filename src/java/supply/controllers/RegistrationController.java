@@ -8,6 +8,7 @@ package supply.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import supply.business.User;
 import supply.data.UserDB;
 import supply.util.MailUtilLocal;
+import supply.util.PasswordUtil;
 
 /**
  *
@@ -83,58 +85,74 @@ public class RegistrationController extends HttpServlet {
         String firstName = request.getParameter("fname");
         String lastName = request.getParameter("lname");
         String email = request.getParameter("email");
+        
         String password = request.getParameter("password");
-
-        User user = new User();
-        if (UserDB.emailExists(email,password)) {            
-            message = "This email address already exists. <br>"
-                    + "Please enter another email address.";
+        String confirmPassword = request.getParameter("confirmPassword");
+       
+        if (!password.equals(confirmPassword)){
+            message ="Your password is not correct, try again.";
             request.setAttribute("message", message);
-            url = "/login/register.jsp";
-        } else {
-            user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-            user.setPassword(password);
-            UserDB.insertUser(user);
-            String to = email;
-            String from = "hoangthithanhngoc@yahoo.com";
-            String subject = "Welcome to Starlight Nail & beauty Suply";
-            String body = "Dear" + firstName + ",\n\n"
-                    + "Thanks for your registration, we'll make sure to send you "
-                    + "announcements about new products and promotions. \n"
-                    + "Have a great day and thanks again! \n\n"
-                    + " Ngoc Hoang \n"
-                    + "Starlight Nail & Beauty supply";
-            boolean isBodyHTML = false;
+             url = "/login/register.jsp";
+        }else{
+            String hashPassword = "";
             try{
-               MailUtilLocal.sendImail(to, from, body, subject, isBodyHTML);
-            }catch(MessagingException e){
-                String errorMessage = "ERROR: Unnable to send email. ";
-                request.setAttribute("errorMessage", errorMessage);
-                this.log(
-                        "Unable to send email. \n"
-                        + "Here is the email you tried to send: \n"
-                        + "=====================================\n"
-                        + "TO: " + email + "\n"
-                        + "FROM: " + from + "\n"
-                        + "SUBJECT: " + subject + "\n"
-                        + "\n"
-                        + body + "\n\n");
+                hashPassword = PasswordUtil.hashPassword(password);
+            }catch (NoSuchAlgorithmException ex) {
+                System.out.println(ex);
             }
+            User user = new User();
+            if (UserDB.emailExists(email,hashPassword)) {            
+                message = "This email address already exists. <br>"
+                    + "Please enter another email address.";
+                request.setAttribute("message", message);
+                url = "/login/register.jsp";
+            } else {
+                user = new User();
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+                user.setEmail(email);
+
+                user.setPassword(hashPassword);
+                UserDB.insertUser(user);
+                
+               /* String to = email;
+                String from = "hoangthithanhngoc@yahoo.com";
+                String subject = "Welcome to Starlight Nail & beauty Suply";
+                String body = "Dear" + firstName + ",\n\n"
+                        + "Thanks for your registration, we'll make sure to send you "
+                        + "announcements about new products and promotions. \n"
+                        + "Have a great day and thanks again! \n\n"
+                        + " Ngoc Hoang \n"
+                        + "Starlight Nail & Beauty supply";
+                boolean isBodyHTML = false;
+                try{
+                  // MailUtilYahoo.sendMail(to, from, subject, body, isBodyHTML);
+                   MailUtilLocal.sendMail(to, from, subject, body, isBodyHTML);
+                }catch(MessagingException e){
+                    String errorMessage = "ERROR: Unnable to send email. ";
+                    request.setAttribute("errorMessage", errorMessage);
+                    this.log(
+                            "Unable to send email. \n"
+                            + "Here is the email you tried to send: \n"
+                            + "=====================================\n"
+                            + "TO: " + email + "\n"
+                            + "FROM: " + from + "\n"
+                            + "SUBJECT: " + subject + "\n"
+                            + "\n"
+                            + body + "\n\n");
+                }*/
             
             url ="/login/user_info.jsp";
         }
         
-        request.setAttribute("message", message);
+       // request.setAttribute("message", message);
         session.setAttribute("user", user);
 
         Cookie emailCookie = new Cookie("emailCookie", email);
         emailCookie.setMaxAge(60 * 60 * 24 * 365 * 2);
         emailCookie.setPath("/");
         response.addCookie(emailCookie);
-        
+        }
         
         
        
